@@ -9,6 +9,7 @@ import base64
 import os
 # 从新的配置文件导入model_options
 from src.utils.model_config import model_options
+from src.utils import config
 
 from src.data.stock_data import StockDataFetcher
 from src.ai.ai_agents import StockAnalysisAgents
@@ -711,9 +712,8 @@ def main():
 def check_api_key():
     """检查API密钥是否配置"""
     try:
-        import config
         return bool(config.DEEPSEEK_API_KEY and config.DEEPSEEK_API_KEY.strip())
-    except:
+    except Exception:
         return False
 
 @st.cache_data(ttl=300)  # 缓存5分钟
