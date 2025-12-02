@@ -24,7 +24,7 @@ class TradingTimeScheduler:
         
     def _load_config(self) -> Dict:
         """加载调度配置"""
-        config_file = "monitor_schedule_config.json"
+        config_file = "conf/monitor_schedule_config.json"
         default_config = {
             "enabled": False,  # 默认不启用自动调度
             "market": "CN",  # CN=中国A股, US=美股, HK=港股
@@ -60,7 +60,7 @@ class TradingTimeScheduler:
     
     def _save_config(self):
         """保存调度配置"""
-        config_file = "monitor_schedule_config.json"
+        config_file = "conf/monitor_schedule_config.json"
         try:
             with open(config_file, 'w', encoding='utf-8') as f:
                 json.dump(self.config, f, indent=2, ensure_ascii=False)

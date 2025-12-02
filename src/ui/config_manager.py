@@ -11,7 +11,7 @@ from typing import Dict, Any
 class ConfigManager:
     """配置管理器"""
     
-    def __init__(self, env_file: str = ".env"):
+    def __init__(self, env_file: str = "conf/.env"):
         self.env_file = Path(env_file)
         self.default_config = {
             "DEEPSEEK_API_KEY": {

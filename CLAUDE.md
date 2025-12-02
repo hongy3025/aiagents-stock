@@ -34,7 +34,7 @@ aiagents-stock/
 │   ├── ui/                   # Streamlit UI components
 │   │   ├── longhubang_ui.py
 │   │   ├── sector_strategy_ui.py
-│   │   ���── smart_monitor_ui.py
+│   │   ├── smart_monitor_ui.py
 │   │   ├── portfolio_ui.py
 │   │   ├── main_force_ui.py
 │   │   ├── monitor_manager.py
@@ -62,6 +62,8 @@ aiagents-stock/
 │   │   └── miniqmt_interface.py
 │   └── pdf/                  # PDF report generators
 │       └── [feature]_pdf.py
+├── data/                     # SQLite database files (*.db)
+├── conf/                     # Configuration files (.env, *.json)
 ├── extra/                    # Non-core/legacy code
 ├── docs/                     # Documentation (60+ files)
 ├── Dockerfile               # Docker image build

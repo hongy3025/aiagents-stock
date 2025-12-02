@@ -220,7 +220,7 @@ class NotificationService:
             # 检查邮件配置是否完整
             if not all([self.config['smtp_server'], self.config['email_from'], 
                        self.config['email_password'], self.config['email_to']]):
-                return False, "邮件配置不完整，请检查.env文件中的邮件设置"
+                return False, "邮件配置不完整，请检查conf/.env文件中的邮件设置"
             
             # 创建测试邮件
             msg = MIMEMultipart()

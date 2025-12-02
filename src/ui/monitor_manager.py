@@ -550,7 +550,7 @@ def display_notification_management():
         st.markdown("---")
         st.markdown("**⚙️ 配置说明**")
         st.caption("""
-        在 `.env` 文件中配置以下参数：
+        在 `conf/.env` 文件中配置以下参数：
         ```
         EMAIL_ENABLED=true
         SMTP_SERVER=smtp.qq.com
@@ -578,7 +578,7 @@ def display_notification_management():
                         st.error(f"❌ {message}")
         else:
             st.button("📧 发送测试邮件", type="primary", width='stretch', disabled=True)
-            st.caption("请先在.env文件中配置邮件参数")
+            st.caption("请先在conf/.env文件中配置邮件参数")
     
     with col2:
         st.subheader("📱 通知历史")

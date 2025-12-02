@@ -1033,7 +1033,7 @@ def display_scheduler_settings():
         开启后，系统将在每天指定时间自动运行智策分析，并将核心结果通过邮件发送。
         
         **前提条件：**
-        - 需要在 `.env` 文件中配置邮件设置
+        - 需要在 `conf/.env` 文件中配置邮件设置
         - 配置项：`EMAIL_ENABLED`, `SMTP_SERVER`, `EMAIL_FROM`, `EMAIL_PASSWORD`, `EMAIL_TO`
         """)
         
@@ -1131,7 +1131,7 @@ def check_email_config():
         if config_complete:
             st.success("✅ 邮件配置完整")
         else:
-            st.warning("⚠️ 邮件配置不完整，请在 .env 文件中配置")
+            st.warning("⚠️ 邮件配置不完整，请在 conf/.env 文件中配置")
 
 
 def test_email_notification():

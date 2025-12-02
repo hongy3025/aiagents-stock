@@ -13,7 +13,7 @@ import logging
 class LonghubangDatabase:
     """龙虎榜数据库管理类"""
     
-    def __init__(self, db_path='longhubang.db'):
+    def __init__(self, db_path='data/longhubang.db'):
         """
         初始化数据库
         

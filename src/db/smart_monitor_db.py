@@ -13,7 +13,7 @@ import json
 class SmartMonitorDB:
     """智能盯盘数据库"""
     
-    def __init__(self, db_file: str = 'smart_monitor.db'):
+    def __init__(self, db_file: str = 'data/smart_monitor.db'):
         """
         初始化数据库
         
