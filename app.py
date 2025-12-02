@@ -479,7 +479,7 @@ def main():
 
     # 检查是否显示持仓分析
     if 'show_portfolio' in st.session_state and st.session_state.show_portfolio:
-        from portfolio_ui import display_portfolio_manager
+        from src.ui.portfolio_ui import display_portfolio_manager
         display_portfolio_manager()
         return
 
