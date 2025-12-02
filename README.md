@@ -412,34 +412,22 @@ sudo sh get-docker.sh
 #### 2. 配置环境变量
 ```bash
 # Windows (PowerShell)
-Copy-Item .env.example .env
+Copy-Item conf/.env.example conf/.env
 
 # Linux/macOS
-cp .env.example .env
+cp conf/.env.example conf/.env
 ```
 
-编辑 `.env` 文件，填入您的 DeepSeek API Key：
+编辑 `conf/.env` 文件，填入您的 DeepSeek API Key：
 ```env
 DEEPSEEK_API_KEY=sk-your-actual-api-key-here
 ```
 
 #### 3. 启动服务
 
-**国内用户推荐**（使用国内镜像源，构建速度快6倍+）：
 ```bash
-# 使用国内源版Dockerfile构建
-docker build -f "Dockerfile国内源版" -t agentsstock1 .
-docker run -d -p 8503:8501 -v $(pwd)/.env:/app/.env --name agentsstock1 agentsstock1
-```
-
-**标准构建方式**：
-```bash
-# 使用 Docker Compose（推荐）
-docker-compose up -d
-
-# 或使用标准 Dockerfile
-docker build -t agentsstock1 .
-docker run -d -p 8503:8501 -v $(pwd)/.env:/app/.env --name agentsstock1 agentsstock1
+# 进入 docker 目录并启动
+cd docker && docker-compose up -d
 ```
 
 #### 4. 访问系统（为避免端口冲突，已将运行端口改为8503）
@@ -448,13 +436,13 @@ docker run -d -p 8503:8501 -v $(pwd)/.env:/app/.env --name agentsstock1 agentsst
 #### 5. 常用命令
 ```bash
 # 查看日志
-docker-compose logs -f
+cd docker && docker-compose logs -f
 
 # 停止服务
-docker-compose down
+cd docker && docker-compose down
 
 # 重启服务
-docker-compose restart
+cd docker && docker-compose restart
 ```
 
 **📖 详细文档**：
