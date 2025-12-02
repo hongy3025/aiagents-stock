@@ -994,41 +994,120 @@ WEBHOOK_KEYWORD=股票
 
 ```
 AI股票分析系统
-├── app.py                          # Streamlit主界面
-├── stock_data.py                   # 股票数据获取模块
-├── deepseek_client.py              # DeepSeek API客户端
-├── ai_agents.py                    # AI智能体分析模块
-├── monitor_manager.py              # 监测管理界面
-├── monitor_service.py              # 监测服务后台
-├── monitor_db.py                   # 监测数据库管理
-├── notification_service.py         # 通知服务（邮件/Webhook/界面）⭐️
-├── config_manager.py               # 配置管理模块 ⭐️
-├── miniqmt_interface.py            # MiniQMT量化交易接口 ⭐️
-├── longhubang_data.py              # 智瞰龙虎数据获取模块 ⭐️ 1017新增
-├── longhubang_db.py                # 智瞰龙虎数据库管理 ⭐️ 1017新增
-├── longhubang_agents.py            # 智瞰龙虎AI分析师团队 ⭐️ 1017新增
-├── longhubang_engine.py            # 智瞰龙虎分析引擎 ⭐️ 1017新增
-├── longhubang_pdf.py               # 智瞰龙虎PDF报告生成 ⭐️ 1017新增
-├── longhubang_ui.py                # 智瞰龙虎界面模块 ⭐️ 1017新增
-├── sector_strategy_data.py         # 智策数据采集模块 ⭐️
-├── sector_strategy_agents.py       # 智策AI智能体团队 ⭐️
-├── sector_strategy_engine.py       # 智策分析引擎 ⭐️
-├── sector_strategy_scheduler.py    # 智策定时任务调度器 ⭐️
-├── sector_strategy_ui.py           # 智策界面模块 ⭐️
-├── sector_strategy_pdf.py          # 智策PDF报告生成 ⭐️
-├── main_force_selector.py          # 主力选股数据获取
-├── main_force_analysis.py          # 主力选股AI分析
-├── main_force_ui.py                # 主力选股界面
-├── main_force_pdf_generator.py     # 主力选股报告生成
-├── pdf_generator.py                # PDF报告生成
-├── database.py                     # 分析记录数据库
-├── config.py                       # 配置文件
-├── requirements.txt                # 依赖包列表
-├── run.py                          # 启动脚本
-├── Dockerfile                      # Docker镜像构建文件 🐳
-├── docker-compose.yml              # Docker编排配置文件 🐳
-├── .dockerignore                   # Docker构建忽略文件 🐳
-└── DOCKER_DEPLOYMENT.md            # Docker部署详细文档 🐳
+│
+├── 📁 核心入口
+│   ├── app.py                          # Streamlit主应用入口，包含路由、侧边栏导航和所有功能模块的集成
+│   ├── run.py                          # 启动脚本，检查依赖完整性后启动Streamlit服务
+│   └── stm.py                          # AI盯盘快速启动脚本，独立运行智能监控模块
+│
+├── 📁 AI智能体系统
+│   ├── ai_agents.py                    # 核心多智能体协调器，包含技术/基本面/资金/风险4位分析师的Prompt和团队讨论逻辑
+│   ├── deepseek_client.py              # DeepSeek API客户端封装，支持chat和reasoner双模型，处理流式响应和token管理
+│   ├── longhubang_agents.py            # 智瞰龙虎5位AI分析师定义：游资行为、个股潜力、题材追踪、风险控制、首席策略师
+│   ├── sector_strategy_agents.py       # 智策板块4位AI智能体：宏观策略师、板块诊断师、资金流向分析师、市场情绪解码员
+│   ├── smart_monitor_deepseek.py       # AI盯盘DeepSeek决策模块，生成买入/卖出/持有的实时交易建议
+│   └── model_config.py                 # LLM模型配置，定义可用模型列表(deepseek-chat/deepseek-reasoner等)
+│
+├── 📁 数据获取层
+│   ├── stock_data.py                   # 核心股票数据获取器，集成多数据源(akshare/yfinance/tushare)，计算MA/MACD/RSI/KDJ/布林带等技术指标
+│   ├── data_source_manager.py          # 数据源冗余管理器，实现TDX→AKShare→Tushare→YFinance的自动降级切换
+│   ├── fund_flow_akshare.py            # 基于AKShare的资金流向数据获取，包含主力/超大单/大单/中单/小单净流入
+│   ├── market_sentiment_data.py        # 市场情绪数据采集，获取涨跌家数、涨停跌停统计、市场温度等指标
+│   ├── quarterly_report_data.py        # 季报财务数据获取，通过pywencai获取最新财报的营收、利润、ROE等核心指标
+│   ├── risk_data_fetcher.py            # 风险数据采集器，获取限售解禁、大股东减持、重要事件等风险预警信息
+│   ├── longhubang_data.py              # 龙虎榜数据获取，对接StockAPI获取游资席位、买卖金额、上榜原因等
+│   ├── sector_strategy_data.py         # 智策板块数据采集，获取行业/概念板块行情、北向资金、财经快讯等
+│   ├── smart_monitor_data.py           # AI盯盘数据获取，获取实时行情、分时数据、技术指标用于AI决策
+│   ├── smart_monitor_tdx_data.py       # TDX本地数据源接口，连接通达信API获取低延迟行情数据(响应<50ms)
+│   ├── news_announcement_data.py       # 新闻公告数据获取，采集个股相关的重大公告和新闻事件
+│   ├── qstock_news_data.py             # qstock新闻数据源，作为新闻数据的备选获取渠道
+│   └── main_force_selector.py          # 主力选股数据获取，通过pywencai获取主力资金净流入TOP100股票
+│
+├── 📁 数据库层
+│   ├── database.py                     # 核心分析记录数据库，存储股票分析结果、AI报告、最终决策等历史数据
+│   ├── monitor_db.py                   # 实时监测数据库，管理监测股票列表、价格历史、通知记录
+│   ├── longhubang_db.py                # 智瞰龙虎数据库，存储龙虎榜原始数据、AI评分、分析报告、推荐股票追踪
+│   ├── sector_strategy_db.py           # 智策板块数据库，保存板块分析结果、预测历史、定时任务记录
+│   ├── smart_monitor_db.py             # AI盯盘数据库，记录盯盘任务、AI决策历史、交易信号
+│   ├── portfolio_db.py                 # 持仓管理数据库，存储用户持仓信息(股票、成本价、数量)和分析历史
+│   └── main_force_batch_db.py          # 主力选股批量分析数据库，保存批量分析任务和历史记录
+│
+├── 📁 业务引擎层
+│   ├── longhubang_engine.py            # 智瞰龙虎分析引擎，协调数据获取→AI分析→评分排名→报告生成的完整流程
+│   ├── longhubang_scoring.py           # 龙虎榜AI评分系统，基于多维度指标对上榜股票进行量化打分排名
+│   ├── sector_strategy_engine.py       # 智策板块分析引擎，驱动4位AI智能体并行分析，生成板块多空/轮动/热度预测
+│   ├── smart_monitor_engine.py         # AI盯盘核心引擎，实现实时监控→AI决策→交易执行→通知推送的完整闭环
+│   ├── smart_monitor_kline.py          # AI盯盘K线图模块，生成带有AI决策标注的交互式K线图
+│   ├── main_force_analysis.py          # 主力选股AI分析模块，对筛选出的股票进行资金流向/行业/基本面综合分析
+│   ├── portfolio_manager.py            # 持仓管理器，处理持仓增删改查、批量分析、自动同步到监测列表
+│   ├── monitor_service.py              # 实时监测后台服务，daemon线程定时检查价格并触发进场/止盈/止损通知
+│   └── monitor_scheduler.py            # 实时监测定时调度器，管理监测任务的启动/停止和交易时段控制
+│
+├── 📁 定时任务调度
+│   ├── sector_strategy_scheduler.py    # 智策定时分析调度器，支持每日自动运行分析并推送邮件/Webhook通知
+│   └── portfolio_scheduler.py          # 持仓定时分析调度器，支持多时间点定时分析并自动同步结果到监测列表
+│
+├── 📁 UI界面层(Streamlit)
+│   ├── longhubang_ui.py                # 智瞰龙虎主界面，包含分析参数设置、进度显示、4个结果Tab和历史报告查询
+│   ├── sector_strategy_ui.py           # 智策板块主界面，展示预测结果、智能体报告、数据可视化和定时任务配置
+│   ├── smart_monitor_ui.py             # AI盯盘界面，管理盯盘任务、显示AI决策、K线图可视化、交易记录
+│   ├── main_force_ui.py                # 主力选股界面，设置筛选参数、展示AI分析结果、批量分析TOP股票
+│   ├── main_force_history_ui.py        # 主力选股历史记录界面，查看和重载历史批量分析结果
+│   ├── portfolio_ui.py                 # 持仓分析界面，管理持仓列表、批量分析、定时任务配置
+│   ├── monitor_manager.py              # 实时监测管理界面，添加/编辑/删除监测股票、启停监测服务、通知历史
+│   ├── monitor_ui.py                   # 实时监测展示界面，显示监测股票实时状态和价格变动
+│   └── config_manager.py               # 环境配置界面，可视化管理API密钥、邮件/Webhook、MiniQMT、TDX等配置
+│
+├── 📁 报告生成
+│   ├── pdf_generator.py                # 核心PDF生成器，基于ReportLab生成包含图表和分析报告的专业PDF文档
+│   ├── pdf_generator_fixed.py          # PDF生成器修复版，解决中文字体和特殊字符渲染问题
+│   ├── pdf_generator_pandoc.py         # 基于Pandoc的PDF生成器，Markdown→PDF转换的备选方案
+│   ├── longhubang_pdf.py               # 智瞰龙虎PDF报告，生成包含推荐股票、AI分析师报告、评分排名的专业文档
+│   ├── sector_strategy_pdf.py          # 智策板块PDF报告，输出板块预测、智能体分析、策略建议的完整报告
+│   └── main_force_pdf_generator.py     # 主力选股报告生成器，支持Markdown/HTML/CSV多格式导出
+│
+├── 📁 外部集成
+│   ├── notification_service.py         # 通知服务中心，统一管理邮件(SMTP)和Webhook(钉钉/飞书)消息推送
+│   ├── miniqmt_interface.py            # MiniQMT量化交易接口，对接迅投QMT实现自动下单、持仓查询、风险控制
+│   └── smart_monitor_qmt.py            # AI盯盘QMT集成，将AI决策信号转化为实际交易指令执行
+│
+├── 📁 配置文件
+│   ├── config.py                       # 核心配置模块，从.env加载所有环境变量并提供默认值
+│   ├── .env.example                    # 环境变量模板，包含所有可配置项的说明和示例值
+│   ├── .streamlit/config.toml          # Streamlit配置，设置主题(light)、端口(8503)、服务器地址
+│   ├── monitor_schedule_config.json    # 监测调度配置，保存定时监测的时间点和交易时段设置
+│   └── requirements.txt                # Python依赖清单，列出所有必需的第三方库及版本要求
+│
+├── 📁 Docker部署
+│   ├── Dockerfile                      # Docker镜像构建文件，基于Python3.12-slim，集成Node.js和中文字体
+│   ├── Dockerfile国际源版              # 国际源Dockerfile，使用官方pip源，适合海外服务器部署
+│   ├── docker-compose.yml              # Docker Compose编排文件，配置端口映射(8503)、数据卷持久化、健康检查
+│   └── .dockerignore                   # Docker构建忽略列表，排除.git、.env、*.db等文件
+│
+├── 📁 数据文件
+│   ├── data/                           # 数据目录，存放临时数据文件和缓存
+│   ├── stock_analysis.db               # 股票分析历史数据库(SQLite)
+│   ├── stock_monitor.db                # 实时监测数据库(SQLite)
+│   ├── longhubang.db                   # 智瞰龙虎数据库(SQLite)
+│   ├── sector_strategy.db              # 智策板块数据库(SQLite)
+│   ├── smart_monitor.db                # AI盯盘数据库(SQLite)
+│   ├── portfolio_stocks.db             # 持仓管理数据库(SQLite)
+│   └── main_force_batch.db             # 主力选股批量分析数据库(SQLite)
+│
+├── 📁 文档
+│   ├── docs/                           # 完整文档目录(60+篇)，包含各功能模块的使用指南和配置说明
+│   ├── README.md                       # 项目主文档，包含功能介绍、快速开始、使用指南和故障排除
+│   ├── BUILD_CN.md                     # 国内构建指南，使用清华镜像源加速依赖安装
+│   └── CLAUDE.md                       # Claude Code开发指南，帮助AI助手理解项目架构
+│
+├── 📁 辅助文件
+│   ├── update_env_example.py           # 环境变量模板更新脚本，同步.env新增配置项到.env.example
+│   ├── env_example.txt                 # 环境变量说明文档，详细解释每个配置项的作用
+│   ├── risk_data_debug_output.txt      # 风险数据调试输出，用于排查pywencai数据获取问题
+│   └── 启动系统.bat                     # Windows一键启动脚本，自动激活虚拟环境并启动服务
+│
+└── 📁 IDE配置
+    └── .vscode/                        # VS Code配置目录，包含推荐扩展和调试配置
 ```
 
 ### 核心模块说明
