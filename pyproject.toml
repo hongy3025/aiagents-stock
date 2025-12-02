@@ -37,6 +37,7 @@ dependencies = [
     "peewee>=3.17.0",
     "schedule>=1.2.0",
     "pywencai>=0.7.0",
+    "watchdog>=6.0.0",
 ]
 
 [project.optional-dependencies]

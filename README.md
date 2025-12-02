@@ -127,10 +127,10 @@
 #### 快速开始
 ```bash
 # 安装依赖
-pip install schedule
+uv sync
 
 # 启动应用
-streamlit run app.py
+uv run streamlit run app.py
 
 # 点击侧边栏"📊 持仓分析"进入功能
 ```
@@ -1066,19 +1066,22 @@ AI股票分析系统
 │   ├── stm.py                          # AI盯盘独立启动脚本
 │   └── update_env_example.py           # 环境变量模板更新脚本
 │
-├── 📁 配置与部署
+├── 📁 data/ - 数据文件
+│   └── *.db                            # SQLite数据库文件(stock_analysis.db, longhubang.db等)
+│
+├── 📁 conf/ - 配置文件
+│   ├── .env                            # 环境变量配置（用户创建）
 │   ├── .env.example                    # 环境变量模板
-│   ├── .streamlit/config.toml          # Streamlit配置(端口8503)
-│   ├── requirements.txt                # Python依赖清单
+│   └── monitor_schedule_config.json    # 监测调度配置
+│
+├── 📁 docker/ - Docker部署
 │   ├── Dockerfile                      # Docker镜像构建文件
-│   ├── Dockerfile国际源版              # 国际源Dockerfile
 │   ├── docker-compose.yml              # Docker Compose编排文件
 │   └── .dockerignore                   # Docker构建忽略列表
 │
-├── 📁 数据文件
-│   ├── data/                           # 数据目录，存放临时数据和缓存
-│   ├── *.db                            # SQLite数据库文件(stock_analysis.db, longhubang.db等)
-│   └── monitor_schedule_config.json    # 监测调度配置
+├── 📁 配置文件
+│   ├── pyproject.toml                  # 项目依赖配置（uv）
+│   └── .streamlit/config.toml          # Streamlit配置(端口8503)
 │
 └── 📁 文档
     ├── docs/                           # 完整文档目录(60+篇)
@@ -1311,15 +1314,15 @@ AI股票分析系统
 
 ### API配置
 ```env
-# .env 文件
+# conf/.env 文件
 DEEPSEEK_API_KEY=your_api_key
 DEEPSEEK_BASE_URL=https://api.deepseek.com/v1
 ```
 
 **重要提示**：
-- 请将 `.env.template` 复制为 `.env` 文件
-- 在 `.env` 文件中填写实际的API密钥
-- 不要将 `.env` 文件提交到版本控制系统
+- 请将 `conf/.env.example` 复制为 `conf/.env` 文件
+- 在 `conf/.env` 文件中填写实际的API密钥
+- 不要将 `conf/.env` 文件提交到版本控制系统
 
 ### 数据配置
 ```python
@@ -1337,8 +1340,8 @@ DEFAULT_INTERVAL = "1d"    # 默认数据间隔
 ### 常见问题
 
 1. **API Key错误**
-   - 检查.env文件中的DEEPSEEK_API_KEY设置
-   - 确保.env文件存在且格式正确
+   - 检查conf/.env文件中的DEEPSEEK_API_KEY设置
+   - 确保conf/.env文件存在且格式正确
    - 确保API Key有效且有足够余额
 
 2. **股票数据获取失败**
@@ -1352,9 +1355,9 @@ DEFAULT_INTERVAL = "1d"    # 默认数据间隔
    - 系统会自动处理，继续进行其他分析
 
 4. **依赖包安装失败**
-   - 使用 `pip install -r requirements.txt`
-   - 如有问题，尝试手动安装单个包
-   - 确保Python版本为3.8+
+   - 使用 `uv sync` 安装依赖
+   - 如有问题，尝试 `uv pip install <package>`
+   - 确保Python版本为3.10+
 
 5. **页面加载缓慢**
    - 首次运行需要下载数据，请耐心等待
@@ -1384,7 +1387,7 @@ DEFAULT_INTERVAL = "1d"    # 默认数据间隔
    - **容器启动失败**：
      - 检查Docker是否正常运行：`docker ps`
      - 查看容器日志：`docker-compose logs -f`
-     - 确认.env文件已正确配置
+     - 确认conf/.env文件已正确配置
    - **端口被占用**：
      - 修改docker-compose.yml中的端口映射（如改为8502:8501）
    - **无法访问网页**：
@@ -1406,7 +1409,7 @@ DEFAULT_INTERVAL = "1d"    # 默认数据间隔
      - 检查网络连接是否正常
    - **钉钉关键词不匹配（错误码310000）**：
      - 确认机器人安全设置中的关键词
-     - 在.env中设置 `WEBHOOK_KEYWORD=股票`（与机器人设置一致）
+     - 在conf/.env中设置 `WEBHOOK_KEYWORD=股票`（与机器人设置一致）
      - 或添加关键词：股票、分析、智策、监测
    - **飞书消息发送失败**：
      - 确认选择 `WEBHOOK_TYPE=feishu`
@@ -1426,9 +1429,9 @@ DEFAULT_INTERVAL = "1d"    # 默认数据间隔
      - 检查TDX Docker容器是否运行：`docker ps | grep tdx`
      - 测试接口可用性：`curl "http://localhost:8080/api/quote?code=000001"`
      - 检查防火墙设置（确保8080端口开放）
-     - 修改`.env`中的`TDX_BASE_URL`为正确的IP地址
+     - 修改`conf/.env`中的`TDX_BASE_URL`为正确的IP地址
    - **TDX数据源未启用**：
-     - 确认`.env`中已配置：`TDX_ENABLED=true`
+     - 确认`conf/.env`中已配置：`TDX_ENABLED=true`
      - 确认`smart_monitor_tdx_data.py`文件存在
      - 重启应用生效
    - **频繁降级到其他数据源**：
@@ -1460,12 +1463,12 @@ DEFAULT_INTERVAL = "1d"    # 默认数据间隔
      - 查看垃圾邮件箱
      - 查看终端日志确认发送状态
    - **PDF生成失败**：
-     - 确认已安装reportlab库：`pip install reportlab`
+     - 确认已安装reportlab库：`uv pip install reportlab`
      - 检查系统是否有足够磁盘空间
      - 查看终端错误信息
    - **ModuleNotFoundError: schedule**：
-     - 安装依赖：`pip install schedule`
-     - 或：`.\venv\Scripts\pip.exe install schedule`
+     - 安装依赖：`uv pip install schedule`
+     - 或重新同步：`uv sync`
    - **详细文档**：
      - [智策板块使用指南.md](docs/智策板块使用指南.md)
      - [智策定时分析使用指南.md](docs/智策定时分析使用指南.md)
@@ -1477,7 +1480,7 @@ DEFAULT_INTERVAL = "1d"    # 默认数据间隔
 **Docker部署日志查看**：
 ```bash
 # 实时查看日志
-docker-compose logs -f
+cd docker && docker-compose logs -f
 
 # 或查看特定容器日志
 docker logs -f agentsstock1
