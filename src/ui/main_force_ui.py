@@ -128,8 +128,7 @@ def display_main_force_selector():
             )
 
     # 模型选择
-    # 导入model_config.py中定义的model_options
-    from model_config import model_options as app_model_options
+    from src.utils.model_config import model_options as app_model_options
     model = st.selectbox(
         "选择AI模型",
         list(app_model_options.keys()),
@@ -996,4 +995,3 @@ def display_main_force_batch_results(batch_results):
 
         df_failed = pd.DataFrame(failed_data)
         st.dataframe(df_failed, width='content')
-

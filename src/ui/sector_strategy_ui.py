@@ -116,8 +116,7 @@ def display_analysis_tab():
     col1, col2, col3 = st.columns([2, 2, 2])
     
     with col1:
-        # 导入model_config.py中定义的model_options
-        from model_config import model_options as app_model_options
+        from src.utils.model_config import model_options as app_model_options
         selected_model = st.selectbox(
             "AI模型",
             list(app_model_options.keys()),
@@ -1157,4 +1156,3 @@ def test_email_notification():
 # 主入口
 if __name__ == "__main__":
     display_sector_strategy()
-
