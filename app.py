@@ -8,20 +8,20 @@ import time
 import base64
 import os
 # 从新的配置文件导入model_options
-from model_config import model_options
+from src.utils.model_config import model_options
 
-from stock_data import StockDataFetcher
-from ai_agents import StockAnalysisAgents
-from pdf_generator import display_pdf_export_section
-from database import db
-from monitor_manager import display_monitor_manager, get_monitor_summary
-from monitor_service import monitor_service
-from notification_service import notification_service
-from config_manager import config_manager
-from main_force_ui import display_main_force_selector
-from sector_strategy_ui import display_sector_strategy
-from longhubang_ui import display_longhubang
-from smart_monitor_ui import smart_monitor_ui
+from src.data.stock_data import StockDataFetcher
+from src.ai.ai_agents import StockAnalysisAgents
+from src.pdf.pdf_generator import display_pdf_export_section
+from src.db.database import db
+from src.ui.monitor_manager import display_monitor_manager, get_monitor_summary
+from src.services.monitor_service import monitor_service
+from src.services.notification_service import notification_service
+from src.ui.config_manager import config_manager
+from src.ui.main_force_ui import display_main_force_selector
+from src.ui.sector_strategy_ui import display_sector_strategy
+from src.ui.longhubang_ui import display_longhubang
+from src.ui.smart_monitor_ui import smart_monitor_ui
 
 # 页面配置
 st.set_page_config(

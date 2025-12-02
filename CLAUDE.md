@@ -24,40 +24,101 @@ docker-compose up -d
 # Access at: http://localhost:8503
 ```
 
+## Project Structure
+
+```
+aiagents-stock/
+├── app.py                    # Main Streamlit entry point
+├── run.py                    # Startup script with dependency checks
+├── src/                      # Source code (organized by layer)
+│   ├── ui/                   # Streamlit UI components
+│   │   ├── longhubang_ui.py
+│   │   ├── sector_strategy_ui.py
+│   │   ���── smart_monitor_ui.py
+│   │   ├── portfolio_ui.py
+│   │   ├── main_force_ui.py
+│   │   ├── monitor_manager.py
+│   │   └── config_manager.py
+│   ├── data/                 # Data fetching layer
+│   │   ├── stock_data.py
+│   │   ├── data_source_manager.py
+│   │   └── [feature]_data.py
+│   ├── ai/                   # AI agents and LLM clients
+│   │   ├── deepseek_client.py
+│   │   ├── ai_agents.py
+│   │   └── [feature]_agents.py
+│   ├── db/                   # Database models (SQLite)
+│   │   ├── database.py
+│   │   └── [feature]_db.py
+│   ├── engines/              # Business logic engines
+│   │   └── [feature]_engine.py
+│   ├── services/             # Background services & schedulers
+│   │   ├── monitor_service.py
+│   │   ├── notification_service.py
+│   │   └── [feature]_scheduler.py
+│   ├── utils/                # Utilities & configuration
+│   │   ├── config.py
+│   │   ├── model_config.py
+│   │   └── miniqmt_interface.py
+│   └── pdf/                  # PDF report generators
+│       └── [feature]_pdf.py
+├── extra/                    # Non-core/legacy code
+├── docs/                     # Documentation (60+ files)
+├── Dockerfile               # Docker image build
+├── docker-compose.yml       # Docker orchestration
+└── requirements.txt         # Python dependencies
+```
+
+## Import Conventions
+
+All imports use absolute paths from project root:
+```python
+from src.data.stock_data import StockDataFetcher
+from src.ai.deepseek_client import DeepSeekClient
+from src.db.database import db
+from src.services.notification_service import notification_service
+from src.ui.config_manager import config_manager
+```
+
+For same-directory imports, use relative imports:
+```python
+from .deepseek_client import DeepSeekClient  # within src/ai/
+```
+
 ## Architecture
 
 ### Core Application Flow
 ```
 Streamlit UI (app.py)
     ↓
-Feature Modules (longhubang_ui.py, sector_strategy_ui.py, etc.)
+UI Components (src/ui/*.py)
     ↓
-Engine Layer (longhubang_engine.py, smart_monitor_engine.py, etc.)
+Engine Layer (src/engines/*.py)
     ↓
-AI Agents (ai_agents.py, longhubang_agents.py, sector_strategy_agents.py)
+AI Agents (src/ai/*.py)
     ↓
-DeepSeek Client (deepseek_client.py)
+DeepSeek Client (src/ai/deepseek_client.py)
     ↓
-Data Layer (stock_data.py, data_source_manager.py)
+Data Layer (src/data/*.py)
     ↓
-Database (SQLite via peewee ORM)
+Database (src/db/*.py - SQLite)
 ```
 
 ### Module Pattern
-Each feature follows a consistent structure:
-- `*_data.py` - Data fetching
-- `*_db.py` - Database model (SQLite)
-- `*_agents.py` - AI agent definitions
-- `*_engine.py` - Business logic
-- `*_ui.py` - Streamlit UI component
-- `*_scheduler.py` - Scheduled tasks (if applicable)
-- `*_pdf.py` - PDF report generation
+Each feature follows a consistent structure across directories:
+- `src/data/*_data.py` - Data fetching
+- `src/db/*_db.py` - Database model (SQLite)
+- `src/ai/*_agents.py` - AI agent definitions
+- `src/engines/*_engine.py` - Business logic
+- `src/ui/*_ui.py` - Streamlit UI component
+- `src/services/*_scheduler.py` - Scheduled tasks (if applicable)
+- `src/pdf/*_pdf.py` - PDF report generation
 
 ### Key Components
-- **StockAnalysisAgents** (`ai_agents.py`): Coordinates 4 analysis agents (technical, fundamental, fund flow, risk)
-- **DeepSeekClient** (`deepseek_client.py`): OpenAI SDK wrapper for DeepSeek API with reasoner model support
-- **StockDataFetcher** (`stock_data.py`): Multi-source data with fallback (TDX → AKShare → Tushare → YFinance)
-- **NotificationService** (`notification_service.py`): Email + Webhook (DingTalk/Feishu)
+- **StockAnalysisAgents** (`src/ai/ai_agents.py`): Coordinates 4 analysis agents (technical, fundamental, fund flow, risk)
+- **DeepSeekClient** (`src/ai/deepseek_client.py`): OpenAI SDK wrapper for DeepSeek API with reasoner model support
+- **StockDataFetcher** (`src/data/stock_data.py`): Multi-source data with fallback (TDX → AKShare → Tushare → YFinance)
+- **NotificationService** (`src/services/notification_service.py`): Email + Webhook (DingTalk/Feishu)
 
 ### Data Sources Priority
 1. TDX API (local, fastest) - configurable via `TDX_ENABLED`
@@ -78,15 +139,15 @@ WEBHOOK_ENABLED           # Optional - DingTalk/Feishu webhooks
 
 ## Feature Modules
 
-| Module | Purpose |
-|--------|---------|
-| Stock Analysis | Multi-agent stock analysis with PDF export |
-| 主力选股 (Main Force) | Institutional capital flow analysis |
-| 智瞰龙虎 (Longhubang) | Dragon Tiger List analysis |
-| 智策 (Sector Strategy) | Sector rotation strategy |
-| AI盯盘 (Smart Monitor) | Real-time AI trading decisions |
-| 持仓分析 (Portfolio) | Portfolio batch analysis with scheduling |
-| 实时监测 (Monitor) | Price alert monitoring |
+| Module | Purpose | Key Files |
+|--------|---------|-----------|
+| Stock Analysis | Multi-agent stock analysis with PDF export | `app.py`, `src/ai/ai_agents.py` |
+| 主力选股 (Main Force) | Institutional capital flow analysis | `src/ui/main_force_ui.py`, `src/engines/main_force_analysis.py` |
+| 智瞰龙虎 (Longhubang) | Dragon Tiger List analysis | `src/ui/longhubang_ui.py`, `src/engines/longhubang_engine.py` |
+| 智策 (Sector Strategy) | Sector rotation strategy | `src/ui/sector_strategy_ui.py`, `src/engines/sector_strategy_engine.py` |
+| AI盯盘 (Smart Monitor) | Real-time AI trading decisions | `src/ui/smart_monitor_ui.py`, `src/engines/smart_monitor_engine.py` |
+| 持仓分析 (Portfolio) | Portfolio batch analysis with scheduling | `src/ui/portfolio_ui.py`, `src/services/portfolio_manager.py` |
+| 实时监测 (Monitor) | Price alert monitoring | `src/ui/monitor_manager.py`, `src/services/monitor_service.py` |
 
 ## Code Conventions
 
@@ -97,15 +158,6 @@ WEBHOOK_ENABLED           # Optional - DingTalk/Feishu webhooks
 - JSON serialization for database storage
 - Pandas DataFrames for data processing
 - Plotly for interactive charts
-
-## Important Files
-
-- `app.py` - Main entry point, routing, ~3000 lines
-- `ai_agents.py` - Core multi-agent coordinator
-- `stock_data.py` - Data fetching with fallback logic
-- `deepseek_client.py` - LLM API wrapper
-- `config.py` / `config_manager.py` - Configuration management
-- `.streamlit/config.toml` - Streamlit settings (port 8503)
 
 ## A-Share Market Rules
 
