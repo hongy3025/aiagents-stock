@@ -47,19 +47,22 @@ RUN node --version && npm --version
 # 配置npm使用淘宝镜像源
 RUN npm config set registry https://registry.npmmirror.com/
 
-# 复制依赖文件
-COPY requirements.txt .
-
-# 安装Python依赖（使用清华源，更稳定）
-RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple/ && \
-    pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn && \
-    pip install --no-cache-dir --default-timeout=1000 -r requirements.txt
+# 安装uv
+RUN pip install uv
 
 # 复制项目文件
+COPY pyproject.toml .
+COPY src/ ./src/
+COPY app.py run.py ./
+
+# 安装Python依赖
+RUN uv sync --no-dev
+
+# 复制其余项目文件
 COPY . .
 
 # 创建必要的目录
-RUN mkdir -p /app/data && chmod 777 /app/data
+RUN mkdir -p /app/data /app/conf && chmod 777 /app/data /app/conf
 
 # 暴露Streamlit默认端口
 EXPOSE 8503
@@ -68,4 +71,4 @@ EXPOSE 8503
 HEALTHCHECK CMD curl --fail http://localhost:8503/_stcore/health || exit 1
 
 # 启动应用
-CMD ["streamlit", "run", "app.py", "--server.port=8503", "--server.address=0.0.0.0"]
+CMD ["uv", "run", "streamlit", "run", "app.py", "--server.port=8503", "--server.address=0.0.0.0"]

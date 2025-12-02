@@ -12,15 +12,12 @@ A multi-AI agent stock analysis system for Chinese A-share markets built with Py
 
 ```bash
 # Install dependencies
-pip install -r requirements.txt
+uv sync
 
-# Run locally (two options)
-streamlit run app.py
-# or
-python run.py
+uv run run.py
 
 # Docker deployment
-docker-compose up -d
+cd docker && docker-compose up -d
 # Access at: http://localhost:8503
 ```
 
@@ -66,9 +63,11 @@ aiagents-stock/
 ├── conf/                     # Configuration files (.env, *.json)
 ├── extra/                    # Non-core/legacy code
 ├── docs/                     # Documentation (60+ files)
-├── Dockerfile               # Docker image build
-├── docker-compose.yml       # Docker orchestration
-└── requirements.txt         # Python dependencies
+├── docker/                   # Docker configuration
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   └── .dockerignore
+└── pyproject.toml            # Project dependencies (uv)
 ```
 
 ## Import Conventions

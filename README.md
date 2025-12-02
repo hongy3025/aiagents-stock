@@ -466,17 +466,20 @@ docker-compose restart
 ## 💻 方式二：本地部署
 
 ### 1. 环境要求
-- Python 3.8+(微软store或官网，推荐3.12)
-- Node.js 16+ (微软store或官网，pywencai需要)
+- Python 3.10+（推荐3.12）
+- [uv](https://docs.astral.sh/uv/) - Python包管理器
+- Node.js 16+ (pywencai需要)
 - 稳定的网络连接（大陆网络请关闭vpn）
 - DeepSeek API Key
 
 ### 2. 安装依赖
-创建激活虚拟环境（powershell）并安装依赖
+使用 uv 安装依赖（推荐）：
 ```bash
-python -m venv venv
-.\venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+# 安装 uv（如未安装）
+pip install uv
+
+# 安装项目依赖
+uv sync
 ```
 
 ### 3. 配置API
@@ -485,13 +488,13 @@ pip install -r requirements.txt
 1. 复制环境变量模板文件：
 ```bash
 # Windows (PowerShell)
-Copy-Item .env.example .env
+Copy-Item conf/.env.example conf/.env
 
-# 或者使用命令
-cp .env.example .env
+# Linux/macOS
+cp conf/.env.example conf/.env
 ```
 
-2. 编辑 `.env` 文件，设置您的配置（也可在前端web界面-环境配置中设置）：
+2. 编辑 `conf/.env` 文件，设置您的配置（也可在前端web界面-环境配置中设置）：
 ```env
 # DeepSeek API配置（必需）
 DEEPSEEK_API_KEY=your_actual_deepseek_api_key_here
@@ -529,17 +532,15 @@ MINIQMT_PORT=58610
 
 ### 4. 启动系统
 ```bash
-.\venv\Scripts\Activate.ps1
-python run.py
+uv run python run.py
 ```
 或者直接运行：
 ```bash
-.\venv\Scripts\Activate.ps1
-streamlit run app.py
+uv run streamlit run app.py
 ```
 
 ### 5. 访问系统
-打开浏览器访问：http://localhost:8501
+打开浏览器访问：http://localhost:8503
 
 ---
 
